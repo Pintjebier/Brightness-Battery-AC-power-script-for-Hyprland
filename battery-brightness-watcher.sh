@@ -1,10 +1,3 @@
-# :battery: :computer: Brightness-Battery-AC-power-script with notifications
-
-Script to automatically adjust screen brightness based on battery or AC power status on a Linux system with Hyprland.
-
-## 📜 Script path: `~/.config/hypr/scripts/battery-brightness-watcher.sh`
-
-```bash
 #!/bin/bash
 
 LAST_STATE=""
@@ -17,7 +10,7 @@ notify() {
 while true; do
     AC_STATE=$(cat /sys/class/power_supply/ACAD/online)
     BATTERY_PERCENT=$(cat /sys/class/power_supply/BAT1/capacity)
-    
+
     if [ "$AC_STATE" = "1" ]; then
         NEW_STATE="AC"
     else
@@ -50,33 +43,3 @@ while true; do
 
     sleep 5
 done
-```
-
-## ⚙️ Systemd user service: `~/.config/systemd/user/battery-brightness.service`
-
-```ini
-[Unit]
-Description=Battery Brightness Watcher
-After=graphical-session.target
-
-[Service]
-ExecStart=/home/YOUR_USERNAME/.config/hypr/scripts/battery-brightness-watcher.sh
-Restart=always
-Environment=DISPLAY=:0
-Environment=XDG_CURRENT_DESKTOP=Hyprland
-Environment=WAYLAND_DISPLAY=wayland-0
-
-[Install]
-WantedBy=default.target
-```
-
-Replace `YOUR_USERNAME` with your actual Linux username.
-
-## ▶️ Enable the systemd user service
-
-```bash
-systemctl --user daemon-reexec
-systemctl --user daemon-reload
-systemctl --user enable --now battery-brightness.service
-systemctl --user status battery-brightness.service
-```

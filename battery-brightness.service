@@ -1,0 +1,13 @@
+[Unit]
+Description=Battery Brightness Watcher
+After=graphical-session.target
+
+[Service]
+ExecStart=/home/YOUR_USERNAME/.config/hypr/scripts/battery-brightness-watcher.sh
+Restart=always
+Environment=DISPLAY=:0
+Environment=XDG_CURRENT_DESKTOP=Hyprland
+Environment=WAYLAND_DISPLAY=wayland-0
+
+[Install]
+WantedBy=default.target
