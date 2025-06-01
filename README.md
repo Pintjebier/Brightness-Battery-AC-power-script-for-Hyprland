@@ -59,16 +59,20 @@ done
 [Unit]
 Description=Battery Brightness Watcher
 After=graphical-session.target
+Requires=graphical-session.target
+StartLimitBurst=3
 
 [Service]
 ExecStart=/home/YOUR_USERNAME/.config/hypr/scripts/battery-brightness-watcher.sh
 Restart=always
+RestartSec=5
 Environment=DISPLAY=:0
 Environment=XDG_CURRENT_DESKTOP=Hyprland
 Environment=WAYLAND_DISPLAY=wayland-0
 
 [Install]
 WantedBy=default.target
+
 ```
 
 Replace `YOUR_USERNAME` with your actual Linux username.
