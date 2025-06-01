@@ -51,7 +51,6 @@ while true; do
 
     sleep 5
 done
-done
 ```
 
 ## ⚙️ Systemd user service: `~/.config/systemd/user/battery-brightness.service`
