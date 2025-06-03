@@ -60,18 +60,29 @@ done
 Description=Battery Brightness Watcher
 After=graphical-session.target
 Requires=graphical-session.target
-StartLimitBurst=3
 
 [Service]
-ExecStart=/home/YOUR_USERNAME/.config/hypr/scripts/battery-brightness-watcher.sh
+Type=simple
+ExecStart=/home/kristof/.config/hypr/scripts/battery-brightness-watcher.sh
 Restart=always
 RestartSec=5
-Environment=DISPLAY=:0
-Environment=XDG_CURRENT_DESKTOP=Hyprland
-Environment=WAYLAND_DISPLAY=wayland-0
+
+# Make sure session bus will be found:
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus
+# (Optional: XDG_RUNTIME_DIR mostly /run/user/%U)
+#Environment=XDG_RUNTIME_DIR=/run/user/%U
+
+# Call Wayland variables only when necessary; DISPLAY=:0 is not needed in Wayland.
+#Environment=DISPLAY=:0
+#Environment=WAYLAND_DISPLAY=wayland-0
+
+# (Make sure the script itself is executed with the right permissions; 
+#  User is already in group video for Brightness.)
+KillMode=process
 
 [Install]
 WantedBy=default.target
+
 
 ```
 
@@ -84,4 +95,9 @@ systemctl --user daemon-reexec
 systemctl --user daemon-reload
 systemctl --user enable --now battery-brightness.service
 systemctl --user status battery-brightness.service
+```
+
+Make sure to add yourself to video and input groups with 
+```
+sudo usermod -aG video,input $User
 ```
