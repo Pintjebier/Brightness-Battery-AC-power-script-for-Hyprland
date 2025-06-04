@@ -10,6 +10,8 @@ The script checks every 5 seconds on the power state.
 
 LAST_STATE=""
 LOW_BATTERY_TRIGGERED=0
+# Wait until notification daemon is running
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
 
 notify() {
     notify-send -u normal -a "Battery status" "$1" "$2" -h int:transient:1
