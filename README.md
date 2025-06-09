@@ -8,19 +8,38 @@ The script checks every 5 seconds on the power state.
 ```bash
 #!/bin/bash
 
+while ! busctl --user --list | grep -q org.freedesktop.Notifications; do
+    sleep 1
+done
+
 LAST_STATE=""
 LOW_BATTERY_TRIGGERED=0
-# Wait until notification daemon is running
 export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
 
 notify() {
     notify-send -u normal -a "Battery status" "$1" "$2" -h int:transient:1
 }
 
+# Check your battery name with: upower --enumerate and change bellow path
+
+BATTERY_CAPACITY_PATH="/sys/class/power_supply/BAT0/capacity"
+AC_STATE_PATH="/sys/class/power_supply/AC/online"
+
 while true; do
-    AC_STATE=$(cat /sys/class/power_supply/ACAD/online)
-    BATTERY_PERCENT=$(cat /sys/class/power_supply/BAT1/capacity)
-    
+    # Check of AC staat aan (1) of uit (0)
+    if [ -f "$AC_STATE_PATH" ]; then
+        AC_STATE=$(cat "$AC_STATE_PATH")
+    else
+        AC_STATE=""
+    fi
+
+    # Lees batterijcapaciteit als bestand bestaat
+    if [ -f "$BATTERY_CAPACITY_PATH" ]; then
+        BATTERY_PERCENT=$(cat "$BATTERY_CAPACITY_PATH")
+    else
+        BATTERY_PERCENT=""
+    fi
+
     if [ "$AC_STATE" = "1" ]; then
         NEW_STATE="AC"
     else
@@ -39,10 +58,11 @@ while true; do
         LAST_STATE="$NEW_STATE"
     fi
 
-    if [ "$NEW_STATE" = "BATTERY" ]; then
+    # Alleen batterijchecks doen als waarde geldig is en we op batterij zitten
+    if [ -n "$BATTERY_PERCENT" ] && [ "$NEW_STATE" = "BATTERY" ]; then
         if [ "$BATTERY_PERCENT" -lt 20 ] && [ "$LOW_BATTERY_TRIGGERED" -eq 0 ]; then
             brightnessctl set 30%
-            notify "󱊡 Battery below 20%" "brightness lowerd at 30%"
+            notify "󱊡 Battery below 20%" "brightness lowered at 30%"
             LOW_BATTERY_TRIGGERED=1
         elif [ "$BATTERY_PERCENT" -gt 25 ] && [ "$LOW_BATTERY_TRIGGERED" -eq 1 ]; then
             brightnessctl set 75%
