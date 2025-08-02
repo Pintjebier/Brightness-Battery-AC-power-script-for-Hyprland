@@ -3,7 +3,7 @@
 Script to automatically adjust screen brightness based on battery or AC power status on a Linux system with Hyprland and notifies you.\
 The script checks every 5 seconds on the power state.
 
-## 📜 Script path: `~/.config/hypr/scripts/battery-brightness-watcher.sh`
+## 📜 Script path: `~/.config/scripts/battery-brightness-watcher.sh`
 
 ```bash
 #!/bin/bash
@@ -83,7 +83,7 @@ Requires=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=/home/kristof/.config/hypr/scripts/battery-brightness-watcher.sh
+ExecStart=/home/[username]/.config/scripts/battery-brightness-watcher.sh
 Restart=always
 RestartSec=5
 
