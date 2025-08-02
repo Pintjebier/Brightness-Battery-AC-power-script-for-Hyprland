@@ -78,8 +78,8 @@ done
 ```ini
 [Unit]
 Description=Battery Brightness Watcher
-After=graphical-session.target
-Requires=graphical-session.target
+After=hyprland-session.target
+Wants=hyprland-session.target
 
 [Service]
 Type=simple
